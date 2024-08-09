@@ -1,1 +1,1 @@
-# Dinning_philosophers-Java
+# Dinning philosophers Problem
