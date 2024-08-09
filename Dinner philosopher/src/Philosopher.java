@@ -5,12 +5,16 @@ public class Philosopher implements Runnable {
     private final Semaphore leftFork;
     private final Semaphore rightFork;
     private long startTime;
+    private int missedMeals;
+
+    private static final int max_time_without_eating = 2;
 
     public Philosopher(int id, Semaphore leftFork, Semaphore rightFork) {
         this.id = id;
         this.leftFork = leftFork;
         this.rightFork = rightFork;
         this.startTime = System.currentTimeMillis();
+        this.missedMeals = 0;
     }
 
     @Override
@@ -20,8 +24,14 @@ public class Philosopher implements Runnable {
                 think();
                 pickUpForks();
                 eat();
+                missedMeals = 0;
                 putDownForks();
                 sleep();
+                missedMeals++;
+                if (missedMeals > max_time_without_eating) {
+                    die();
+                    return;
+                }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -53,6 +63,10 @@ public class Philosopher implements Runnable {
     private void sleep() throws InterruptedException {
         log("is sleeping");
         Thread.sleep((long) (Math.random() * 1000));
+    }
+
+    private void die() {
+        log("has died.");
     }
 
     private void log(String action) {
